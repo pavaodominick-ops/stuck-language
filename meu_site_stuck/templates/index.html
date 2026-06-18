@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STUCK 0.4 — Web IDE & Aprendizagem</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/theme/dracula.min.css">
+    
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1e1e1e;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+        header {
+            background-color: #2d2d2d;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid #151515;
+            z-index: 10;
+        }
+        header h1 { margin: 0; font-size: 1.2rem; color: #569cd6; }
+        header button {
+            background-color: #2b5b84;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        header button:hover { background-color: #3b76a6; }
+        
+        .layout-container {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - 54px);
+        }
+        
+        /* Barra Lateral de Aprendizagem / Tutoriais */
+        .tutorial-sidebar {
+            width: 320px;
+            background-color: #252526;
+            border-right: 2px solid #151515;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+        }
+        .tutorial-header {
+            background-color: #2d2d2d;
+            padding: 12px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            color: #569cd6;
+            border-bottom: 1px solid #151515;
+        }
+        .tutorial-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        .tutorial-content::-webkit-scrollbar { width: 6px; }
+        .tutorial-content::-webkit-scrollbar-thumb { background: #424242; border-radius: 3px; }
+        
+        .doc-section {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #333333;
+            padding-bottom: 15px;
+        }
+        .doc-section h3 { margin: 0 0 8px 0; color: #4fc1ff; font-size: 1rem; }
+        .doc-section p { margin: 0 0 8px 0; color: #cccccc; }
+        .doc-section pre {
+            background-color: #1a1a1a;
+            padding: 8px;
+            border-radius: 4px;
+            margin: 0;
+            overflow-x: auto;
+            font-family: 'Consolas', monospace;
+            color: #ce9178;
+        }
+
+        /* Área de Desenvolvimento (Editor + Console) */
+        .workspace {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            background-color: #1e1e1e;
+        }
+        .CodeMirror {
+            flex: 1;
+            font-family: 'Consolas', monospace;
+            font-size: 15px;
+            height: auto;
+        }
+        .console-area {
+            height: 180px;
+            background-color: #151515;
+            border-top: 2px solid #2d2d2d;
+            padding: 10px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+        .console-title {
+            font-size: 0.8rem;
+            color: #858585;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        #output {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #a8ff60;
+            font-family: 'Consolas', monospace;
+            font-size: 14px;
+            resize: none;
+            outline: none;
+        }
+        .error-text { color: #ff6c60 !important; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>STUCK 0.4 — Ambiente de Desenvolvimento Online</h1>
+        <button onclick="executeCode()">▶ Executar Código</button>
+    </header>
+
+    <div class="layout-container">
+        
+        <div class="tutorial-sidebar">
+            <div class="tutorial-header">🎓 DOCUMENTAÇÃO & TUTORIAIS</div>
+            <div class="tutorial-content">
+                
+                <div class="doc-section">
+                    <h3>Aula 1: Escopo Global</h3>
+                    <p>Todo o teu código precisa obrigatoriamente de ser escrito dentro do bloco inicial:</p>
+                    <pre>logical{\n  // código\n}</pre>
+                </div>
+
+                <div class="doc-section">
+                    <h3>Aula 2: Variáveis e Comentários</h3>
+                    <p>Cria comentários usando <code>//</code> e declara variáveis dinâmicas usando o prefixo <code>cot</code>:</p>
+                    <pre>cot idade = 15\ncot ativo = true</pre>
+                </div>
+
+                <div class="doc-section">
+                    <h3>Aula 3: Saída de Texto</h3>
+                    <p>Para exibir mensagens ou dados processados no console abaixo, usa a instrução:</p>
+                    <pre>aparec("Olá Mundo!")</pre>
+                </div>
+
+                <div class="doc-section">
+                    <h3>Aula 4: Operações e Parênteses</h3>
+                    <p>Em STUCK, o segundo termo matemático ou condicional vem sempre envolvido por parênteses colados ao operador:</p>
+                    <pre>cot x = 10 +(5)\ncot check = x >(12)</pre>
+                </div>
+
+                <div class="doc-section">
+                    <h3>Aula 5: Decisões (If / Else)</h3>
+                    <p>Desvia o fluxo do teu programa avaliando testes condicionais:</p>
+                    <pre>if(idade >=(18)){\n  aparec("Livre")\n}\nelse{\n  aparec("Barrado")\n}</pre>
+                </div>
+
+                <div class="doc-section">
+                    <h3>Aula 6: Loops e Repetições</h3>
+                    <p>Usa <code>repet(n)</code> para repetição fixa, ou <code>while</code> e <code>for</code> para controle dinâmico:</p>
+                    <pre>repet(3){\n  aparec("Loop")\n}</pre>
+                </div>
+
+                <div class="doc-section">
+                    <h3>Aula 7: Listas e Vetores</h3>
+                    <p>Manipula conjuntos de dados com <code>push()</code>, <code>remove()</code> e a contagem <code>len()</code>:</p>
+                    <pre>cot lista = [1,2]\npush(lista, 3)</pre>
+                </div>
+
+                <div class="doc-section">
+                    <h3>Aula 8: Funções (func)</h3>
+                    <p>Declare procedimentos com parâmetros e retornos <strong>antes/fora</strong> do bloco logical:</p>
+                    <pre>func soma(a, b){\n  return a +(b)\n}</pre>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="workspace">
+            <textarea id="editor">logical{
+// Bem-vindo ao compilador STUCK 0.4!
+// Utiliza o painel à esquerda para aprender a sintaxe.
+
+cot utilizador = "Programador"
+cot idade = 15
+cot loops = 2
+
+aparec("=== SISTEMA OPERACIONAL ATIVO ===")
+
+if(idade >(12)){
+    aparec("Status: Permitido!")
+}
+
+repet(loops){
+    aparec("A processar dados do sistema...")
+}
+}</textarea>
+
+            <div class="console-area">
+                <div class="console-title">CONSOLE DE SAÍDA</div>
+                <textarea id="output" readonly></textarea>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.12/mode/javascript/javascript.min.js"></script>
+
+    <script>
+        // Inicializa o Editor Web
+        var editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
+            lineNumbers: true,
+            theme: "dracula",
+            mode: "javascript"
+        });
+
+        // Comunicação Assíncrona com o Servidor Flask em Python
+        function executeCode() {
+            var codeContent = editor.getValue();
+            var outputConsole = document.getElementById("output");
+            
+            outputConsole.value = "A executar o interpretador STUCK...";
+            outputConsole.classList.remove("error-text");
+
+            fetch('/run', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: codeContent })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    outputConsole.value = data.error;
+                    outputConsole.classList.add("error-text");
+                } else {
+                    outputConsole.value = data.output || "Código executado sem nenhuma saída de texto.";
+                }
+            })
+            .catch(err => {
+                outputConsole.value = "Erro fatal: Não foi possível conectar ao servidor Python.";
+                outputConsole.classList.add("error-text");
+            });
+        }
+    </script>
+</body>
+</html>
